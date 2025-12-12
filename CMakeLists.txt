@@ -16,6 +16,7 @@ add_executable(device-imitators
     src/main.cpp
     src/temperature_meter.h src/temperature_meter.cpp
     src/modbus_client.h src/modbus_client.cpp
+    src/router.h src/router.cpp
 )
 target_link_libraries(device-imitators
     Qt${QT_VERSION_MAJOR}::Core
