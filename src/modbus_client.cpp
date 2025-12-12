@@ -7,6 +7,7 @@
 ModbusClient::ModbusClient(QString address, int port, QObject* parent)
     : QObject{parent}
     , _modbusClient(new QModbusTcpClient(this))
+    , _timer(new QTimer(this))
 {
     _modbusClient->setConnectionParameter(QModbusDevice::NetworkAddressParameter, QVariant(address));
     _modbusClient->setConnectionParameter(QModbusDevice::NetworkPortParameter, QVariant(port));
@@ -21,17 +22,13 @@ ModbusClient::ModbusClient(QString address, int port, QObject* parent)
     connect(_timer, &QTimer::timeout, this, &ModbusClient::readRequest);
     _timer->setInterval(1000);
 
-    if (!_modbusClient->connectDevice()) {
-        qCritical() << "Modbus connection error";
-    } else {
-        qInfo() << "Connecting to" << address << ":" << port;
-    }
+    connect(_modbusClient, &QModbusClient::stateChanged, this, &ModbusClient::onModbusStateChanged);
 }
 
 void ModbusClient::onModbusStateChanged(QModbusDevice::State state)
 {
     if (state == QModbusDevice::ConnectedState) {
-        qCritical() << "device is connected";
+        qInfo() << "device is connected";
         _timer->start();
     } else if (state == QModbusDevice::UnconnectedState) {
         qCritical() << "device is unconnected";
