@@ -11,6 +11,9 @@ class ModbusClient : public QObject
 public:
     ModbusClient(QString address, int port, QObject* parent = nullptr);
 
+signals:
+    void request(quint16 data[10]);
+
 private slots:
     void onModbusStateChanged(QModbusDevice::State state);
     void onReadReady();

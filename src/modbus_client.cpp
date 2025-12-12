@@ -66,25 +66,3 @@ void ModbusClient::readRequest()
         reply->deleteLater();
     }
 }
-
-#if 0
-void ModbusClient::run()
-{
-    while (_connected) {
-        sleep(1);
-
-        QModbusDataUnit readUnit(QModbusDataUnit::HoldingRegisters, 0, 10);
-        QModbusReply* reply = _modbusClient->sendReadRequest(readUnit, _serverAddress);
-        if (!reply) {
-            qCritical() << "get data failed";
-            continue;
-        }
-
-        if (!reply->isFinished()) {
-            connect(reply, &QModbusReply::finished, this, &ModbusClient::onReadReady);
-        } else {
-            reply->deleteLater();
-        }
-    }
-}
-#endif
