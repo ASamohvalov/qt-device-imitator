@@ -13,7 +13,7 @@ ModbusClient::ModbusClient(QString address, int port, QObject* parent)
     _modbusClient->setConnectionParameter(QModbusDevice::NetworkPortParameter, QVariant(port));
     _modbusClient->setTimeout(_timeout);
 
-    if (!_modbusClient->connectDevice()) {
+    if (_modbusClient->connectDevice()) {
         qCritical() << "modbus connection error";
         return;
     }
@@ -23,6 +23,7 @@ ModbusClient::ModbusClient(QString address, int port, QObject* parent)
     _timer->setInterval(1000);
 
     connect(_modbusClient, &QModbusClient::stateChanged, this, &ModbusClient::onModbusStateChanged);
+
 }
 
 void ModbusClient::onModbusStateChanged(QModbusDevice::State state)
@@ -44,6 +45,7 @@ void ModbusClient::onReadReady()
         for (qsizetype i = 0; i < unit.valueCount(); ++i) {
             quint16 value = unit.value(i);
             qInfo() << QString("address %1: value %2").arg(i).arg(value);
+            sendResponse();
         }
     } else {
         qCritical() << "read data error";
@@ -64,5 +66,25 @@ void ModbusClient::readRequest()
         connect(reply, &QModbusReply::finished, this, &ModbusClient::onReadReady);
     } else {
         reply->deleteLater();
+    }
+}
+
+void ModbusClient::sendResponse()
+{
+    QVector<quint16> data {100, 200, 300, 400, 500};
+    QModbusDataUnit writeUnit(QModbusDataUnit::HoldingRegisters, 0, data.size());
+    for (int i = 0; i < data.size(); ++i) {
+        writeUnit.setValue(i, data[i]);
+    }
+    if (QModbusReply* reply = _modbusClient->sendWriteRequest(writeUnit, _serverAddress)) {
+        if (!reply->isFinished()) {
+            connect(reply, &QModbusReply::finished, this, [this, reply]() {
+                if (reply->error() == QModbusDevice::NoError) {
+                    qDebug() << "data is write successfully";
+                } else {
+                    qDebug() << "data is write failed";
+                }
+            });
+        }
     }
 }

@@ -20,6 +20,8 @@ private slots:
     void readRequest();
 
 private:
+    void sendResponse();
+
     QModbusClient* _modbusClient;
     QTimer* _timer;
     bool _connected = false;

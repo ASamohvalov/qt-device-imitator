@@ -9,7 +9,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core SerialBus)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core SerialBus)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core SerialBus)
 
 add_executable(device-imitators
@@ -17,6 +17,8 @@ add_executable(device-imitators
     src/temperature_meter.h src/temperature_meter.cpp
     src/modbus_client.h src/modbus_client.cpp
     src/router.h src/router.cpp
+    src/modbus_server.h src/modbus_server.cpp
+    src/config.h
 )
 target_link_libraries(device-imitators
     Qt${QT_VERSION_MAJOR}::Core

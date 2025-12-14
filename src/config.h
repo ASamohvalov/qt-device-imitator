@@ -1,0 +1,8 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define SERVER_NETWORK_ADDRESS "127.0.0.1"
+#define SERVER_NETWORK_PORT 1502
+#define SERVER_ADDRESS_NUMBER 1
+
+#endif // CONFIG_H
