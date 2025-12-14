@@ -24,7 +24,7 @@ bool ModbusServer::startServer()
 
 void ModbusServer::onErrorOccurred(QModbusDevice::Error error)
 {
-    qCritical() << "server error, message - " << error.errorString();
+    qCritical() << "server error";
 }
 
 void ModbusServer::initRegisters()

@@ -6,12 +6,13 @@
 
 class ModbusServer : public QObject
 {
+    Q_OBJECT
 public:
-    ModbusServer(QObject* parent = nullptr);
+    explicit ModbusServer(QObject* parent = nullptr);
     bool startServer();
 
 signals:
-    void dataWritten(QModbusDataUnit::RegisterType type, int address, int size);
+    void dataWritten(QModbusDataUnit::RegisterType table, int address, int size);
 
 private slots:
     void onErrorOccurred(QModbusDevice::Error error);

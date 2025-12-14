@@ -1,0 +1,4 @@
+# Hashes of file build rules.
+b8d79d9c5783ba4e1dbe538723c71817 CMakeFiles/device-imitators-test_autogen
+54cee3bfd47d475bb3818b01ca1f20c9 device-imitators-test_autogen/timestamp
+a96ffd882dbc67ebd112a0b54b4060ac device-imitators_autogen/timestamp

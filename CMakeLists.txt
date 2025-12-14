@@ -15,10 +15,10 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core SerialBus)
 add_executable(device-imitators
     src/main.cpp
     src/temperature_meter.h src/temperature_meter.cpp
-    src/modbus_client.h src/modbus_client.cpp
-    src/router.h src/router.cpp
+
     src/modbus_server.h src/modbus_server.cpp
     src/config.h
+    src/device_imitator.h src/device_imitator.cpp
 )
 target_link_libraries(device-imitators
     Qt${QT_VERSION_MAJOR}::Core
