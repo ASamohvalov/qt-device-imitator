@@ -17,14 +17,12 @@ signals:
 private slots:
     void onModbusStateChanged(QModbusDevice::State state);
     void onReadReady();
-    void readRequest();
 
 private:
-    void sendResponse();
+    void startTest();
+    void writeDataOnSp(float data);
 
     QModbusClient* _modbusClient;
-    QTimer* _timer;
-    bool _connected = false;
 
     static constexpr int _timeout = 10000;
     static constexpr int _serverAddress = 1;

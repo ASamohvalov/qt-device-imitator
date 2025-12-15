@@ -3,24 +3,23 @@
 #include <QModbusTcpClient>
 #include <QVariant>
 #include <QDebug>
+#include <QThread>
+// for std::cin
+#include <iostream>
 
 ModbusClient::ModbusClient(QString address, int port, QObject* parent)
     : QObject{parent}
     , _modbusClient(new QModbusTcpClient(this))
-    , _timer(new QTimer(this))
 {
     _modbusClient->setConnectionParameter(QModbusDevice::NetworkAddressParameter, QVariant(address));
     _modbusClient->setConnectionParameter(QModbusDevice::NetworkPortParameter, QVariant(port));
     _modbusClient->setTimeout(_timeout);
 
-    if (_modbusClient->connectDevice()) {
+    if (!_modbusClient->connectDevice()) {
         qCritical() << "modbus connection error";
         return;
     }
-    qInfo() << "modbus connection success, on port" << port << ":" << address;
-
-    connect(_timer, &QTimer::timeout, this, &ModbusClient::readRequest);
-    _timer->setInterval(1000);
+    qInfo() << "modbus connection with server success, on port" << port << ":" << address;
 
     connect(_modbusClient, &QModbusClient::stateChanged, this, &ModbusClient::onModbusStateChanged);
 }
@@ -28,11 +27,10 @@ ModbusClient::ModbusClient(QString address, int port, QObject* parent)
 void ModbusClient::onModbusStateChanged(QModbusDevice::State state)
 {
     if (state == QModbusDevice::ConnectedState) {
-        qInfo() << "device is connected";
-        _timer->start();
+        qInfo() << "[State changed] device is connected";
+        startTest();
     } else if (state == QModbusDevice::UnconnectedState) {
-        qCritical() << "device is unconnected";
-        _timer->stop();
+        qCritical() << "[State changed] device is unconnected";
     }
 }
 
@@ -44,44 +42,38 @@ void ModbusClient::onReadReady()
         for (qsizetype i = 0; i < unit.valueCount(); ++i) {
             quint16 value = unit.value(i);
             qInfo() << QString("address %1: value %2").arg(i).arg(value);
-            sendResponse();
         }
+        qInfo() << "INFO: read data success";
     } else {
-        qCritical() << "read data error";
+        qCritical() << "ERROR: read data failed";
     }
     reply->deleteLater();
 }
 
-void ModbusClient::readRequest()
+void ModbusClient::startTest()
 {
-    QModbusDataUnit readUnit(QModbusDataUnit::HoldingRegisters, 0, 10);
-    QModbusReply* reply = _modbusClient->sendReadRequest(readUnit, _serverAddress);
-    if (!reply) {
-        qCritical() << "get data failed";
-        return;
-    }
-
-    if (!reply->isFinished()) {
-        connect(reply, &QModbusReply::finished, this, &ModbusClient::onReadReady);
-    } else {
-        reply->deleteLater();
-    }
+    qInfo() << "set target temp data:";
+    float temp;
+    std::cin >> temp;
+    writeDataOnSp(temp);
 }
 
-void ModbusClient::sendResponse()
+void ModbusClient::writeDataOnSp(float data)
 {
-    QVector<quint16> data {100, 200, 300, 400, 500};
-    QModbusDataUnit writeUnit(QModbusDataUnit::HoldingRegisters, 0, data.size());
-    for (int i = 0; i < data.size(); ++i) {
-        writeUnit.setValue(i, data[i]);
-    }
+    QModbusDataUnit writeUnit(QModbusDataUnit::HoldingRegisters, 0x100B, 2);
+    quint32 rawdata;
+    memcpy(&rawdata, &data, sizeof(float));
+    quint16 hi = (rawdata >> 16) & 0xFFFF;
+    quint16 lo = rawdata & 0xFFFF;
+    writeUnit.setValue(0, hi);
+    writeUnit.setValue(1, lo);
     if (QModbusReply* reply = _modbusClient->sendWriteRequest(writeUnit, _serverAddress)) {
         if (!reply->isFinished()) {
             connect(reply, &QModbusReply::finished, this, [this, reply]() {
                 if (reply->error() == QModbusDevice::NoError) {
-                    qDebug() << "data is write successfully";
+                    qInfo() << "INFO: data is write successfully";
                 } else {
-                    qDebug() << "data is write failed";
+                    qInfo() << "ERROR: data is write failed";
                 }
             });
         }

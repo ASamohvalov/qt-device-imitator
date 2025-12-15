@@ -13,7 +13,7 @@ find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core SerialBus)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core SerialBus)
 
 add_executable(device-imitators-test
-    src/main.cpp
+    src/test.cpp
     src/modbus_client.h src/modbus_client.cpp
 )
 target_link_libraries(device-imitators-test

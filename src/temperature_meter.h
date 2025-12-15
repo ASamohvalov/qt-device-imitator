@@ -11,15 +11,15 @@ class TemperatureMeter : public QThread
 public:
     explicit TemperatureMeter(QObject *parent = nullptr);
 
-    double currentTemp();
-    void setTargetTemp(double temp);
+    float currentTemp();
+    void setTargetTemp(float temp);
 
 protected:
     void run() override;
 
 private:
-    double _currentTemp = 20;
-    double _targetTemp = 20;
+    float _currentTemp = 20;
+    float _targetTemp = 20;
 
     bool _up = true;
 

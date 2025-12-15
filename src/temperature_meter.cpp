@@ -8,7 +8,7 @@ TemperatureMeter::TemperatureMeter(QObject *parent)
     : QThread{parent}
 {}
 
-double TemperatureMeter::currentTemp()
+float TemperatureMeter::currentTemp()
 {
     QMutexLocker locker(&_mutex);
     return _currentTemp;
@@ -31,7 +31,7 @@ void TemperatureMeter::run()
     }
 }
 
-void TemperatureMeter::setTargetTemp(double temp)
+void TemperatureMeter::setTargetTemp(float temp)
 {
     QMutexLocker locker(&_mutex);
     _targetTemp = temp;

@@ -12,7 +12,10 @@ public:
     bool startServer();
 
 signals:
-    void dataWritten(QModbusDataUnit::RegisterType table, int address, int size);
+    void spWritten(float data);
+
+private slots:
+    void onDataWritten(QModbusDataUnit::RegisterType table, int address, int size);
 
 private slots:
     void onErrorOccurred(QModbusDevice::Error error);

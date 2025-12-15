@@ -1,24 +1,20 @@
 #include "device_imitator.h"
-#include "config.h"
 
 #include <QDebug>
 
 DeviceImitator::DeviceImitator(QObject* parent)
     : QObject(parent)
 {
-    connect(&_modbusServer, &ModbusServer::dataWritten, this, &DeviceImitator::onDataWritten);
+    connect(&_modbusServer, &ModbusServer::spWritten, this, &DeviceImitator::onTargetTempSet);
 }
 
 void DeviceImitator::imitate()
 {
-    if (!_modbusServer.startServer()) {
-        qCritical() << "start server error";
-        return;
-    }
-    qInfo() << "server successfully started on address:" << SERVER_NETWORK_ADDRESS << ":" << SERVER_NETWORK_PORT;
+    _modbusServer.startServer();
     _tempMeter.start();
 }
 
-void DeviceImitator::onDataWritten(QModbusDataUnit::RegisterType table, int address, int size)
+void DeviceImitator::onTargetTempSet(float data)
 {
+    _tempMeter.setTargetTemp(data);
 }

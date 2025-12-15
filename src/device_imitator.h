@@ -15,7 +15,7 @@ public:
 
 private slots:
     // data written by modbus client
-    void onDataWritten(QModbusDataUnit::RegisterType table, int address, int size);
+    void onTargetTempSet(float data);
 
 private:
     TemperatureMeter _tempMeter;
