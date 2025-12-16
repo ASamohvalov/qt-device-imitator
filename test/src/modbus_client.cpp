@@ -43,9 +43,9 @@ void ModbusClient::onReadReady()
             quint16 value = unit.value(i);
             qInfo() << QString("address %1: value %2").arg(i).arg(value);
         }
-        qInfo() << "INFO: read data success";
+        qInfo() << "[INFO] read data success";
     } else {
-        qCritical() << "ERROR: read data failed";
+        qCritical() << "[ERROR] read data failed";
     }
     reply->deleteLater();
 }
@@ -71,9 +71,9 @@ void ModbusClient::writeDataOnSp(float data)
         if (!reply->isFinished()) {
             connect(reply, &QModbusReply::finished, this, [this, reply]() {
                 if (reply->error() == QModbusDevice::NoError) {
-                    qInfo() << "INFO: data is write successfully";
+                    qInfo() << "[INFO] data is write successfully";
                 } else {
-                    qInfo() << "ERROR: data is write failed";
+                    qInfo() << "[ERROR] data is write failed";
                 }
             });
         }

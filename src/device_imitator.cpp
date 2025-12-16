@@ -6,6 +6,7 @@ DeviceImitator::DeviceImitator(QObject* parent)
     : QObject(parent)
 {
     connect(&_modbusServer, &ModbusServer::spWritten, this, &DeviceImitator::onTargetTempSet);
+    connect(&_tempMeter, &TemperatureMeter::tempChanged, &_modbusServer, &ModbusServer::onPwChanged);
 }
 
 void DeviceImitator::imitate()

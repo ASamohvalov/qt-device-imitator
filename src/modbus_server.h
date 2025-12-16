@@ -14,6 +14,9 @@ public:
 signals:
     void spWritten(float data);
 
+public slots:
+    void onPwChanged(float data);
+
 private slots:
     void onDataWritten(QModbusDataUnit::RegisterType table, int address, int size);
 

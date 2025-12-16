@@ -20,10 +20,10 @@ void TemperatureMeter::run()
         {
             QMutexLocker locker(&_mutex);
             if (_up && _currentTemp < _targetTemp) {
-                _currentTemp += 0.1 + (QRandomGenerator::global()->bounded(0.2));
+                setCurrentTemp(_currentTemp + 0.1 + (QRandomGenerator::global()->bounded(0.2)));
                 qInfo() << "current temperature -" << _currentTemp;
             } else if (!_up && _currentTemp > _targetTemp) {
-                _currentTemp -= 0.1 + (QRandomGenerator::global()->bounded(0.2));
+                setCurrentTemp(_currentTemp - 0.1 + (QRandomGenerator::global()->bounded(0.2)));
                 qInfo() << "current temperature -" << _currentTemp;
             }
         }
@@ -36,4 +36,10 @@ void TemperatureMeter::setTargetTemp(float temp)
     QMutexLocker locker(&_mutex);
     _targetTemp = temp;
     _up = _currentTemp <= _targetTemp;
+}
+
+void TemperatureMeter::setCurrentTemp(float temp)
+{
+    _currentTemp = temp;
+    emit tempChanged(temp);
 }

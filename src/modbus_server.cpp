@@ -29,6 +29,24 @@ bool ModbusServer::startServer()
     return true;
 }
 
+void ModbusServer::onPwChanged(float data)
+{
+    quint32 rawdata;
+    memcpy(&rawdata, &data, sizeof(data));
+    quint16 hi = (rawdata >> 16) & 0xFFFF;
+    quint16 lo = rawdata & 0xFFFF;
+    if (!_server->setData(QModbusDataUnit::HoldingRegisters, 0x1009, hi)
+        && !_server->setData(QModbusDataUnit::HoldingRegisters, 0x100A, lo)) {
+        qInfo() << "[ERROR] failed to set data in registers (0x1009-0x100A)";
+    }
+
+    // set to 0x0001
+    quint16 value = static_cast<quint16>(data);
+    if (!_server->setData(QModbusDataUnit::HoldingRegisters, 0x0001, value)) {
+        qInfo() << "[ERROR] failed to set data in register (0x0001)";
+    }
+}
+
 void ModbusServer::onDataWritten(QModbusDataUnit::RegisterType table, int address, int size)
 {
     if (table != QModbusDataUnit::HoldingRegisters)
@@ -37,6 +55,12 @@ void ModbusServer::onDataWritten(QModbusDataUnit::RegisterType table, int addres
     QModbusDataUnit unit(table, address, size);
     if (!_server->data(&unit))
         return;
+
+    // SP 0x0002
+    if (address == 0x0002 && size == 1) {
+        quint16 data = unit.value(0);
+        emit spWritten(data);
+    }
 
     // SP 0x100B - 0x100C
     if (address == 0x100B && size == 2) {

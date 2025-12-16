@@ -14,10 +14,16 @@ public:
     float currentTemp();
     void setTargetTemp(float temp);
 
+signals:
+    void tempChanged(float temp);
+
 protected:
     void run() override;
 
 private:
+    // no mutex here
+    void setCurrentTemp(float temp);
+
     float _currentTemp = 20;
     float _targetTemp = 20;
 
