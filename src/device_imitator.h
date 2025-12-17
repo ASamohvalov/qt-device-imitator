@@ -2,7 +2,8 @@
 #define DEVICE_IMITATOR_H
 
 #include "temperature_meter.h"
-#include "modbus_server.h"
+#include "devices/trm210_server.h"
+#include "devices/trm10_server.h"
 
 #include <QObject>
 
@@ -16,10 +17,13 @@ public:
 private slots:
     // data written by modbus client
     void onTargetTempSet(float data);
+    void onTargetTempSet10(float data);
 
 private:
-    TemperatureMeter _tempMeter;
-    ModbusServer _modbusServer;
+    TemperatureMeter _tempMeter210;
+    TRM210Server _trm210Server;
+    TemperatureMeter _tempMeter10;
+    TRM10Server _trm10Server;
 };
 
 #endif // DEVICE_IMITATOR_H

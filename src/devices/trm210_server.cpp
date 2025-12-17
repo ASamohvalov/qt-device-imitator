@@ -1,35 +1,33 @@
-#include "modbus_server.h"
-#include "config.h"
+#include "trm210_server.h"
 
 #include <QModbusTcpServer>
-#include <QDebug>
 
-ModbusServer::ModbusServer(QObject* parent)
+TRM210Server::TRM210Server(QObject* parent)
     : QObject(parent)
     , _server(new QModbusTcpServer(this))
 {
     initRegisters();
 
-    connect(_server, &QModbusServer::dataWritten, this, &ModbusServer::onDataWritten);
-    connect(_server, &QModbusServer::errorOccurred, this, &ModbusServer::onErrorOccurred);
+    connect(_server, &QModbusServer::dataWritten, this, &TRM210Server::onDataWritten);
+    connect(_server, &QModbusServer::errorOccurred, this, &TRM210Server::onErrorOccurred);
 }
 
-bool ModbusServer::startServer()
+bool TRM210Server::startServer(QString address, int port, int serverAddress)
 {
-    _server->setConnectionParameter(QModbusDevice::NetworkAddressParameter, SERVER_NETWORK_ADDRESS);
-    _server->setConnectionParameter(QModbusDevice::NetworkPortParameter, SERVER_NETWORK_PORT);
-    _server->setServerAddress(SERVER_ADDRESS_NUMBER);
+    _server->setConnectionParameter(QModbusDevice::NetworkAddressParameter, address);
+    _server->setConnectionParameter(QModbusDevice::NetworkPortParameter, port);
+    _server->setServerAddress(serverAddress);
 
     if (!_server->connectDevice()) {
-        qCritical() << "failed to start Modbus server:"
+        qCritical() << "[ERROR] failed to start Modbus server:"
                     << _server->errorString();
         return false;
     }
-    qInfo() << "server successfully started on address:" << SERVER_NETWORK_ADDRESS << ":" << SERVER_NETWORK_PORT;
+    qInfo() << "[TRM210] server successfully started on address:" << address << ":" << port ;
     return true;
 }
 
-void ModbusServer::onPwChanged(float data)
+void TRM210Server::onPwChanged(float data)
 {
     quint32 rawdata;
     memcpy(&rawdata, &data, sizeof(data));
@@ -47,7 +45,7 @@ void ModbusServer::onPwChanged(float data)
     }
 }
 
-void ModbusServer::onDataWritten(QModbusDataUnit::RegisterType table, int address, int size)
+void TRM210Server::onDataWritten(QModbusDataUnit::RegisterType table, int address, int size)
 {
     if (table != QModbusDataUnit::HoldingRegisters)
         return;
@@ -73,21 +71,21 @@ void ModbusServer::onDataWritten(QModbusDataUnit::RegisterType table, int addres
     }
 }
 
-void ModbusServer::onErrorOccurred(QModbusDevice::Error error)
+void TRM210Server::onErrorOccurred(QModbusDevice::Error error)
 {
-    qCritical() << "modbus server error:"
+    qCritical() << "[ERROR] modbus server error:"
                 << error
                 << _server->errorString();
 }
 
-void ModbusServer::initRegisters()
+void TRM210Server::initRegisters()
 {
     QModbusDataUnitMap registers;
 
     registers.insert(QModbusDataUnit::HoldingRegisters, QModbusDataUnit(QModbusDataUnit::HoldingRegisters, 0, 0x100C + 1));
 
     if (!_server->setMap(registers)) {
-        qCritical() << "modbus failed to set register map:"
+        qCritical() << "[ERROR] modbus failed to set register map:"
                     << _server->errorString();
     }
 }

@@ -1,15 +1,15 @@
-#ifndef MODBUS_SERVER_H
-#define MODBUS_SERVER_H
+#ifndef TRM210_SERVER_H
+#define TRM210_SERVER_H
 
 #include <QModbusServer>
-#include <QUrl>
+#include <QObject>
 
-class ModbusServer : public QObject
+class TRM210Server : public QObject
 {
     Q_OBJECT
 public:
-    explicit ModbusServer(QObject* parent = nullptr);
-    bool startServer();
+    TRM210Server(QObject* parent = nullptr);
+    bool startServer(QString address, int port, int serverAddress);
 
 signals:
     void spWritten(float data);
@@ -29,4 +29,4 @@ private:
     QModbusServer* _server;
 };
 
-#endif // MODBUS_SERVER_H
+#endif // TRM210_SERVER_H

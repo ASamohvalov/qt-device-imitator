@@ -5,17 +5,28 @@
 DeviceImitator::DeviceImitator(QObject* parent)
     : QObject(parent)
 {
-    connect(&_modbusServer, &ModbusServer::spWritten, this, &DeviceImitator::onTargetTempSet);
-    connect(&_tempMeter, &TemperatureMeter::tempChanged, &_modbusServer, &ModbusServer::onPwChanged);
+    connect(&_trm210Server, &TRM210Server::spWritten, this, &DeviceImitator::onTargetTempSet);
+    connect(&_tempMeter210, &TemperatureMeter::tempChanged, &_trm210Server, &TRM210Server::onPwChanged);
+
+    connect(&_trm10Server, &TRM10Server::spWritten, this, &DeviceImitator::onTargetTempSet10);
+    connect(&_tempMeter10, &TemperatureMeter::tempChanged, &_trm10Server, &TRM10Server::onPwChanged);
 }
 
 void DeviceImitator::imitate()
 {
-    _modbusServer.startServer();
-    _tempMeter.start();
+    _trm210Server.startServer("127.0.0.1", 1502, 1);
+    _tempMeter210.start();
+
+    _trm10Server.startServer("127.0.0.1", 1501, 2);
+    _tempMeter10.start();
 }
 
 void DeviceImitator::onTargetTempSet(float data)
 {
-    _tempMeter.setTargetTemp(data);
+    _tempMeter210.setTargetTemp(data);
+}
+
+void DeviceImitator::onTargetTempSet10(float data)
+{
+    _tempMeter10.setTargetTemp(data);
 }

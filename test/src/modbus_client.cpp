@@ -7,9 +7,10 @@
 // for std::cin
 #include <iostream>
 
-ModbusClient::ModbusClient(QString address, int port, QObject* parent)
+ModbusClient::ModbusClient(QString address, int port, int serverAddress, QObject* parent)
     : QObject{parent}
     , _modbusClient(new QModbusTcpClient(this))
+    , _serverAddress(serverAddress)
 {
     _modbusClient->setConnectionParameter(QModbusDevice::NetworkAddressParameter, QVariant(address));
     _modbusClient->setConnectionParameter(QModbusDevice::NetworkPortParameter, QVariant(port));
@@ -52,15 +53,44 @@ void ModbusClient::onReadReady()
 
 void ModbusClient::startTest()
 {
-    qInfo() << "set target temp data:";
-    float temp;
-    std::cin >> temp;
-    writeDataOnSp(temp);
+    if (_serverAddress == 1) {
+        qInfo() << "[TRM210] set target temp data:";
+        float temp;
+        std::cin >> temp;
+        writeDataOnSp210(temp);
+    } else {
+        qInfo() << "[TRM10] set target temp data:";
+        float temp10;
+        std::cin >> temp10;
+        writeDataOnSp10(temp10);
+    }
 }
 
-void ModbusClient::writeDataOnSp(float data)
+void ModbusClient::writeDataOnSp210(float data)
 {
     QModbusDataUnit writeUnit(QModbusDataUnit::HoldingRegisters, 0x100B, 2);
+    quint32 rawdata;
+    memcpy(&rawdata, &data, sizeof(float));
+    quint16 hi = (rawdata >> 16) & 0xFFFF;
+    quint16 lo = rawdata & 0xFFFF;
+    writeUnit.setValue(0, hi);
+    writeUnit.setValue(1, lo);
+    if (QModbusReply* reply = _modbusClient->sendWriteRequest(writeUnit, _serverAddress)) {
+        if (!reply->isFinished()) {
+            connect(reply, &QModbusReply::finished, this, [this, reply]() {
+                if (reply->error() == QModbusDevice::NoError) {
+                    qInfo() << "[INFO] data is write successfully";
+                } else {
+                    qInfo() << "[ERROR] data is write failed";
+                }
+            });
+        }
+    }
+}
+
+void ModbusClient::writeDataOnSp10(float data)
+{
+    QModbusDataUnit writeUnit(QModbusDataUnit::HoldingRegisters, 0x0200, 2);
     quint32 rawdata;
     memcpy(&rawdata, &data, sizeof(float));
     quint16 hi = (rawdata >> 16) & 0xFFFF;

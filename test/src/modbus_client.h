@@ -9,7 +9,7 @@ class ModbusClient : public QObject
 {
     Q_OBJECT
 public:
-    ModbusClient(QString address, int port, QObject* parent = nullptr);
+    ModbusClient(QString address, int port, int serverAddress, QObject* parent = nullptr);
 
 signals:
     void request(quint16 data[10]);
@@ -20,12 +20,13 @@ private slots:
 
 private:
     void startTest();
-    void writeDataOnSp(float data);
+    void writeDataOnSp210(float data);
+    void writeDataOnSp10(float data);
 
     QModbusClient* _modbusClient;
 
     static constexpr int _timeout = 10000;
-    static constexpr int _serverAddress = 1;
+    const int _serverAddress;
 };
 
 #endif // MODBUS_CLIENT_H
