@@ -19,6 +19,8 @@ void DeviceImitator::imitate()
 
     _trm10Server.startServer("127.0.0.1", 1501, 2);
     _tempMeter10.start();
+
+    _b5_107Server.startServer(8080);
 }
 
 void DeviceImitator::onTargetTempSet(float data)

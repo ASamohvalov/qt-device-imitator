@@ -20,6 +20,7 @@ add_executable(device-imitators
     src/device_imitator.h src/device_imitator.cpp
     src/devices/trm210_server.h src/devices/trm210_server.cpp
     src/devices/trm10_server.h src/devices/trm10_server.cpp
+    src/devices/b5_107_server.h src/devices/b5_107_server.cpp
 )
 target_link_libraries(device-imitators
     Qt${QT_VERSION_MAJOR}::Core

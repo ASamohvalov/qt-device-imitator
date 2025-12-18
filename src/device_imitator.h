@@ -4,6 +4,7 @@
 #include "temperature_meter.h"
 #include "devices/trm210_server.h"
 #include "devices/trm10_server.h"
+#include "devices/b5_107_server.h"
 
 #include <QObject>
 
@@ -24,6 +25,8 @@ private:
     TRM210Server _trm210Server;
     TemperatureMeter _tempMeter10;
     TRM10Server _trm10Server;
+
+    B5_107Server _b5_107Server;
 };
 
 #endif // DEVICE_IMITATOR_H

@@ -15,6 +15,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core SerialBus)
 add_executable(device-imitators-test
     src/test.cpp
     src/modbus_client.h src/modbus_client.cpp
+    src/tcp_socket_client.h src/tcp_socket_client.cpp
+
 )
 target_link_libraries(device-imitators-test
     Qt${QT_VERSION_MAJOR}::Core
