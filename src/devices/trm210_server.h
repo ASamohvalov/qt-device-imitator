@@ -9,7 +9,7 @@ class TRM210Server : public QObject
     Q_OBJECT
 public:
     TRM210Server(QObject* parent = nullptr);
-    bool startServer(QString address, int port, int serverAddress);
+    bool startServer(const QString& address, int port, int serverAddress);
 
 signals:
     void spWritten(float data);

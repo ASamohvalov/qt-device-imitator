@@ -6,19 +6,19 @@ TcpSocketClient::TcpSocketClient(QString address, int port, QObject *parent)
 {
     _socket->connectToHost(address, port);
     connect(_socket, &QTcpSocket::connected, this, &TcpSocketClient::onConnected);
+    connect(_socket, &QTcpSocket::readyRead, this, &TcpSocketClient::onReadyRead);
 }
 
 void TcpSocketClient::onConnected()
 {
     qDebug() << "device is connected";
 
-    QDataStream in(_socket);
-    in.setVersion(QDataStream::Qt_6_4);
-    in << "hello world!!!";
+    _socket->write("voltage ?\n");
+    _socket->flush();
 }
-
 
 void TcpSocketClient::onReadyRead()
 {
-
+    QByteArray data = _socket->readAll();
+    qDebug() << data;
 }

@@ -12,7 +12,7 @@ TRM210Server::TRM210Server(QObject* parent)
     connect(_server, &QModbusServer::errorOccurred, this, &TRM210Server::onErrorOccurred);
 }
 
-bool TRM210Server::startServer(QString address, int port, int serverAddress)
+bool TRM210Server::startServer(const QString& address, int port, int serverAddress)
 {
     _server->setConnectionParameter(QModbusDevice::NetworkAddressParameter, address);
     _server->setConnectionParameter(QModbusDevice::NetworkPortParameter, port);
