@@ -27,6 +27,7 @@ private:
 
     float current = 0;
     float voltage = 0;
+    bool output = true;
 };
 
 #endif // B5_107_SERVER_H

@@ -34,15 +34,6 @@ void B5_107Server::onReadyRead()
 
 void B5_107Server::parse(QTcpSocket* client, const QString& str)
 {
-    /*
-    QString aliases[5][2] = {
-        { "current", "curr" },
-        { "voltage", "volt" },
-        { "current_out", "meas:curr" },
-        { "voltage_out", "meas:volt" },
-        { "output", "outp" }
-    };
-    */
     qDebug() << "[B5-107] parse started";
     QString cmd = str.simplified().toLower();
     qDebug() << cmd;
@@ -51,7 +42,7 @@ void B5_107Server::parse(QTcpSocket* client, const QString& str)
         int cmdLength = cmd.startsWith("current") ? 7 : 4;
         QString rest = cmd.mid(cmdLength).trimmed();
 
-        if (rest.endsWith('?')) {
+        if (rest == '?') {
             qDebug() << "[B5-107] current get" << current;
             QByteArray response = QString::number(current, 'f', 6).toUtf8();
             client->write(response);
@@ -70,10 +61,10 @@ void B5_107Server::parse(QTcpSocket* client, const QString& str)
     }
 
     else if (cmd.startsWith("voltage") || cmd.startsWith("volt")) {
-        int cmdLength = cmd == "volt" ? 4 : 7;
+        int cmdLength = cmd.startsWith("voltage") ? 7 : 4;
         QString rest = cmd.mid(cmdLength).trimmed();
 
-        if (rest.endsWith('?')) {
+        if (rest == '?') {
             qDebug() << "[B5-107] voltage get" << voltage;
             QByteArray response = QString::number(voltage, 'f', 6).toUtf8();
             client->write(response);
@@ -89,5 +80,44 @@ void B5_107Server::parse(QTcpSocket* client, const QString& str)
             return;
         }
         qCritical() << "[ERROR] set value is not a number";
+    }
+
+    else if (cmd.startsWith("output") || cmd.startsWith("outp")) {
+        int cmdLength = cmd.startsWith("output") ? 6 : 4;
+        QString rest = cmd.mid(cmdLength).trimmed();
+
+        if (rest == "on") {
+            output = true;
+            qDebug() << "[B5-107] output set to ON";
+        } else if (rest == "off") {
+            output = false;
+            qDebug() << "[B5-107] output set to OFF";
+        } else {
+            qDebug() << "[ERROR] output syntax error";
+        }
+    }
+
+    else if (cmd.startsWith("current_out") || cmd.startsWith("meas:curr")) {
+        int cmdLength = cmd.startsWith("current_out") ? 11 : 9;
+        QString rest = cmd.mid(cmdLength).trimmed();
+
+        float vol = output ? current : 0;
+        if (rest == '?') {
+            qDebug() << "[B5-107] current_out get" << vol;
+            QByteArray response = QString::number(vol, 'f', 6).toUtf8();
+            client->write(response);
+        }
+    }
+
+    else if (cmd.startsWith("voltage_out") || cmd.startsWith("meas:volt")) {
+        int cmdLength = cmd.startsWith("voltage_out") ? 11 : 9;
+        QString rest = cmd.mid(cmdLength).trimmed();
+
+        float vol = output ? current : 0;
+        if (rest == '?') {
+            qDebug() << "[B5-107] voltage_out get" << vol;
+            QByteArray response = QString::number(vol, 'f', 6).toUtf8();
+            client->write(response);
+        }
     }
 }
