@@ -21,6 +21,9 @@ void DeviceImitator::imitate()
     _tempMeter10.start();
 
     _b5_107Server.startServer(8080);
+    _b5_107Server.logDeviceName = "[B5-107]";
+    _b5_110Server.startServer(8081);
+    _b5_110Server.logDeviceName = "[B5-110]";
 }
 
 void DeviceImitator::onTargetTempSet(float data)

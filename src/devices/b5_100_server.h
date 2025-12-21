@@ -1,16 +1,19 @@
-#ifndef B5_107_SERVER_H
-#define B5_107_SERVER_H
+#ifndef B5_100_SERVER_H
+#define B5_100_SERVER_H
 
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
 
-class B5_107Server : public QObject
+// for B5-107 and B5-110
+class B5_100Server : public QObject
 {
     Q_OBJECT
 public:
-    explicit B5_107Server(QObject *parent = nullptr);
+    explicit B5_100Server(QObject *parent = nullptr);
     void startServer(int port);
+
+    QString logDeviceName = "[B5-100]";
 
 signals:
     void currentChanged(float curr);
@@ -30,4 +33,4 @@ private:
     bool output = true;
 };
 
-#endif // B5_107_SERVER_H
+#endif // B5_100_SERVER_H
