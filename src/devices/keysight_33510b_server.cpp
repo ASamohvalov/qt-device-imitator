@@ -37,4 +37,8 @@ void KeySight_33510BServer::parse(QTcpSocket* client, QString str)
 {
     QString cmd = str.simplified().toLower();
 
+    if (cmd.startsWith("func")) {
+        // function call
+    }
+
 }

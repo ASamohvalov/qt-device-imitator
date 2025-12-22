@@ -50,7 +50,11 @@ void B5_100Server::parse(QTcpSocket* client, const QString& str)
         bool ok;
         float val = rest.toFloat(&ok);
         if (ok) {
-            // emit currentChanged(val);
+            // minmax checker
+            if (val < minCurr || val > maxCurr) {
+                qCritical() << logDeviceName << "ERROR value is not in the range";
+                return;
+            }
             current = val;
             qDebug() << logDeviceName << "current set to" << val;
             return;
@@ -72,7 +76,11 @@ void B5_100Server::parse(QTcpSocket* client, const QString& str)
         bool ok;
         float val = rest.toFloat(&ok);
         if (ok) {
-            // emit voltageChanged(val);
+            // minmax checker
+            if (val < minVolt || val > maxVolt) {
+                qCritical() << logDeviceName << "ERROR value is not in the range";
+                return;
+            }
             voltage = val;
             qDebug() << logDeviceName << "voltage set to" << val;
             return;

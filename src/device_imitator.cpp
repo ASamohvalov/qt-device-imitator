@@ -22,8 +22,13 @@ void DeviceImitator::imitate()
 
     _b5_107Server.startServer(8080);
     _b5_107Server.logDeviceName = "[B5-107]";
+    _b5_107Server.maxCurr = 10;
+    _b5_107Server.maxVolt = 75;
+
     _b5_110Server.startServer(8081);
     _b5_110Server.logDeviceName = "[B5-110]";
+    _b5_110Server.maxCurr = 20;
+    _b5_110Server.maxVolt = 40;
 
     _keysight_33510BServer.startServer(5025);
 }

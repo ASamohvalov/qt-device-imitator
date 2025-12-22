@@ -14,6 +14,8 @@ public:
     void startServer(int port);
 
     QString logDeviceName = "[B5-100]";
+    float minCurr = 0, maxCurr = 0;
+    float minVolt = 0, maxVolt = 0;
 
 signals:
     void currentChanged(float curr);
