@@ -24,6 +24,8 @@ void DeviceImitator::imitate()
     _b5_107Server.logDeviceName = "[B5-107]";
     _b5_110Server.startServer(8081);
     _b5_110Server.logDeviceName = "[B5-110]";
+
+    _keysight_33510BServer.startServer(5025);
 }
 
 void DeviceImitator::onTargetTempSet(float data)

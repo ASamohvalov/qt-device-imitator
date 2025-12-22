@@ -2,7 +2,7 @@
 
 B5_100Server::B5_100Server(QObject *parent)
     : QObject{parent}
-    , _server(new QTcpServer())
+    , _server(new QTcpServer(this))
 {
     connect(_server, &QTcpServer::newConnection, this, &B5_100Server::onNewConnection);
 }
@@ -34,9 +34,7 @@ void B5_100Server::onReadyRead()
 
 void B5_100Server::parse(QTcpSocket* client, const QString& str)
 {
-    qDebug() << logDeviceName << "parse started";
     QString cmd = str.simplified().toLower();
-    qDebug() << cmd;
 
     if (cmd.startsWith("current") || cmd.startsWith("curr")) {
         int cmdLength = cmd.startsWith("current") ? 7 : 4;
@@ -113,7 +111,7 @@ void B5_100Server::parse(QTcpSocket* client, const QString& str)
         int cmdLength = cmd.startsWith("voltage_out") ? 11 : 9;
         QString rest = cmd.mid(cmdLength).trimmed();
 
-        float vol = output ? current : 0;
+        float vol = output ? voltage : 0;
         if (rest == '?') {
             qDebug() << logDeviceName << "voltage_out get" << vol;
             QByteArray response = QString::number(vol, 'f', 6).toUtf8();
