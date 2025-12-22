@@ -36,7 +36,7 @@ void B5_100Server::parse(QTcpSocket* client, const QString& str)
 {
     QString cmd = str.simplified().toLower();
 
-    if (cmd.startsWith("current") || cmd.startsWith("curr")) {
+    if (cmd.startsWith("curr")) {
         int cmdLength = cmd.startsWith("current") ? 7 : 4;
         QString rest = cmd.mid(cmdLength).trimmed();
 
@@ -58,7 +58,7 @@ void B5_100Server::parse(QTcpSocket* client, const QString& str)
         qCritical() << logDeviceName << "ERROR set value is not a number";
     }
 
-    else if (cmd.startsWith("voltage") || cmd.startsWith("volt")) {
+    else if (cmd.startsWith("volt")) {
         int cmdLength = cmd.startsWith("voltage") ? 7 : 4;
         QString rest = cmd.mid(cmdLength).trimmed();
 
@@ -80,7 +80,7 @@ void B5_100Server::parse(QTcpSocket* client, const QString& str)
         qCritical() << logDeviceName << "ERROR set value is not a number";
     }
 
-    else if (cmd.startsWith("output") || cmd.startsWith("outp")) {
+    else if (cmd.startsWith("outp")) {
         int cmdLength = cmd.startsWith("output") ? 6 : 4;
         QString rest = cmd.mid(cmdLength).trimmed();
 

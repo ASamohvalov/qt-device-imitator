@@ -33,8 +33,8 @@ void KeySight_33510BServer::onReadyRead()
     parse(client, data);
 }
 
-
-void KeySight_33510BServer::parse(QTcpSocket* client, QString data)
+void KeySight_33510BServer::parse(QTcpSocket* client, QString str)
 {
+    QString cmd = str.simplified().toLower();
 
 }

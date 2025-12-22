@@ -16,7 +16,7 @@ private slots:
     void onReadyRead();
 
 private:
-    void parse(QTcpSocket* client, QString data);
+    void parse(QTcpSocket* client, QString str);
 
     QTcpServer* _server;
 };
