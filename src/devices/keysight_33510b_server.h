@@ -19,6 +19,10 @@ private:
     void parse(QTcpSocket* client, QString str);
 
     QTcpServer* _server;
+
+    float frequency = 1;
+    float voltage = 0;
+    bool output = true;
 };
 
 #endif // KEYSIGHT_33510B_SERVER_H

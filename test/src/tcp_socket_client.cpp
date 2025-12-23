@@ -13,8 +13,8 @@ void TcpSocketClient::onConnected()
 {
     qDebug() << "device is connected";
 
-    _socket->write("output off\n");
-    _socket->flush();
+    // _socket->write("output on\n");
+    // _socket->flush();
 
     _socket->write("meas:volt ?\n");
     _socket->flush();
