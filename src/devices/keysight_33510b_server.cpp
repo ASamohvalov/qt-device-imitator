@@ -22,7 +22,7 @@ void KeySight_33510BServer::onNewConnection()
 {
     QTcpSocket* client = _server->nextPendingConnection();
     connect(client, &QTcpSocket::readyRead, this, &KeySight_33510BServer::onReadyRead);
-    connect(client, &QTcpSocket::disconnected, _server, &QTcpServer::deleteLater);
+    connect(client, &QTcpSocket::disconnected, client, &QTcpSocket::deleteLater);
     qDebug() << "[KeySight 33510B] new connection";
 }
 
@@ -92,7 +92,7 @@ void KeySight_33510BServer::parse(QTcpSocket* client, const QString& str)
         }
 
         function = rest.simplified().toUpper();
-        qDebug() << "[KeySight 33510B] funciton set to" << rest;
+        qDebug() << "[KeySight 33510B] funciton set to" << function;
 
         /*
         else if (rest == "SIG") {

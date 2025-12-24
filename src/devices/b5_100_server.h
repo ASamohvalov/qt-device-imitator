@@ -17,10 +17,6 @@ public:
     float minCurr = 0, maxCurr = 0;
     float minVolt = 0, maxVolt = 0;
 
-signals:
-    void currentChanged(float curr);
-    void voltageChanged(float curr);
-
 private slots:
     void onNewConnection();
     void onReadyRead();

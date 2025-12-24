@@ -16,7 +16,6 @@ add_executable(device-imitators
     src/main.cpp
     src/temperature_meter.h src/temperature_meter.cpp
 
-    src/config.h
     src/device_imitator.h src/device_imitator.cpp
     src/devices/trm210_server.h src/devices/trm210_server.cpp
     src/devices/trm10_server.h src/devices/trm10_server.cpp
