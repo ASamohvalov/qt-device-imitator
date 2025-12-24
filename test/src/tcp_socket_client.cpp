@@ -16,7 +16,7 @@ void TcpSocketClient::onConnected()
     // _socket->write("output on\n");
     // _socket->flush();
 
-    _socket->write("meas:volt ?\n");
+    _socket->write("volt 15\n");
     _socket->flush();
 }
 

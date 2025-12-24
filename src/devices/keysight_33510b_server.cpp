@@ -13,6 +13,7 @@ void KeySight_33510BServer::startServer(int port)
 {
     if (!_server->listen(QHostAddress::Any, port)) {
         qDebug() << "[KeySight 33510B] failed to start tcp server on port:" << port;
+        return;
     }
     qDebug() << "[KeySight 33510B] server successfully started on port:" << port;
 }
@@ -33,21 +34,68 @@ void KeySight_33510BServer::onReadyRead()
     parse(client, data);
 }
 
-void KeySight_33510BServer::parse(QTcpSocket* client, QString str)
+void KeySight_33510BServer::parse(QTcpSocket* client, const QString& str)
 {
     QString cmd = str.simplified().toLower();
 
     // symmetry
     if (cmd.startsWith("func:ramp:symm")) {
+        QString rest = cmd.mid(14).trimmed();
+        if (rest == '?') {
+            qDebug() << "[KeySight 33510B] symmetry get" << funcRampSymm;
+            QByteArray response = QString::number(funcRampSymm, 'f', 6).toUtf8();
+            client->write(response);
+            return;
+        }
+
+        bool ok;
+        float val = rest.toFloat(&ok);
+        if (ok) {
+            // add minmax checker!
+            funcRampSymm = val;
+            qDebug() << "[KeySight 33510B] symmetry set to" << val;
+            return;
+        }
+        qCritical() << "[KeySight 33510B] ERROR set value is not a number";
+    }
+
+    // decycle
+    if (cmd.startsWith("func:squ:dcyc")) {
+        QString rest = cmd.mid(13).trimmed();
+        if (rest == '?') {
+            qDebug() << "[KeySight 33510B] decycle get" << funcSquDcyc;
+            QByteArray response = QString::number(funcSquDcyc, 'f', 6).toUtf8();
+            client->write(response);
+            return;
+        }
+
+        bool ok;
+        float val = rest.toFloat(&ok);
+        if (ok) {
+            // add minmax checker!
+            funcSquDcyc = val;
+            qDebug() << "[KeySight 33510B] decycle set to" << val;
+            return;
+        }
+        qCritical() << "[KeySight 33510B] ERROR set value is not a number";
     }
 
     // function ??
     else if (cmd.startsWith("func")) {
-        int cmdLength = cmd.startsWith("frequency") ? 7 : 4;
+        int cmdLength = cmd.startsWith("function") ? 7 : 4;
         QString rest = cmd.mid(cmdLength).trimmed();
 
-        if (rest == "SIG") {
+        if (rest == '?') {
+            qDebug() << "[KeySight 33510B] funciton get" << function;
+            client->write(function.toLatin1());
+            return;
+        }
 
+        function = rest.simplified().toUpper();
+        qDebug() << "[KeySight 33510B] funciton set to" << rest;
+
+        /*
+        else if (rest == "SIG") {
         } else if (rest == "SQU") {
         } else if (rest == "TRI") {
         } else if (rest == "RAMP") {
@@ -58,6 +106,7 @@ void KeySight_33510BServer::parse(QTcpSocket* client, QString str)
         } else {
             qCritical() << "[KeySight 33510B] ERROR no such func" << rest;
         }
+        */
     }
 
     // frequency
@@ -108,11 +157,48 @@ void KeySight_33510BServer::parse(QTcpSocket* client, QString str)
 
     // offset ??
     else if (cmd.startsWith("volt:offs")) {
+        int cmdLength = 9;
+        QString rest = cmd.mid(cmdLength).trimmed();
+
+        if (rest == '?') {
+            qDebug() << "[KeySight 33510B] offset get" << voltageOffset;
+            QByteArray response = QString::number(voltageOffset, 'f', 6).toUtf8();
+            client->write(response);
+            return;
+        }
+
+        bool ok;
+        float val = rest.toFloat(&ok);
+        if (ok) {
+            // add minmax checker!
+            voltageOffset = val;
+            qDebug() << "[KeySight 33510B] offset set to" << val;
+            return;
+        }
+        qCritical() << "[KeySight 33510B] ERROR set value is not a number";
     }
 
-
     // load ??
-    else if (cmd.startsWith("outp*:load")) {
+    else if (cmd.startsWith("outp:load")) {
+        int cmdLength = 9;
+        QString rest = cmd.mid(cmdLength).trimmed();
+
+        if (rest == '?') {
+            qDebug() << "[KeySight 33510B] load get" << outputLoad;
+            QByteArray response = QString::number(outputLoad, 'f', 6).toUtf8();
+            client->write(response);
+            return;
+        }
+
+        bool ok;
+        float val = rest.toFloat(&ok);
+        if (ok) {
+            // add minmax checker!
+            voltageOffset = val;
+            qDebug() << "[KeySight 33510B] offset set to" << val;
+            return;
+        }
+        qCritical() << "[KeySight 33510B] ERROR set value is not a number";
     }
 
     // output
