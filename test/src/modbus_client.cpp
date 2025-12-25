@@ -58,11 +58,21 @@ void ModbusClient::startTest()
         float temp;
         std::cin >> temp;
         writeDataOnSp210(temp);
-    } else {
+    } else if (_serverAddress == 2) {
         qInfo() << "[TRM10] set target temp data:";
         float temp10;
         std::cin >> temp10;
         writeDataOnSp10(temp10);
+    } else {
+        qInfo() << "[DSVCH] register address:";
+        int address;
+        std::cin >> address;
+
+        qInfo() << "[DSVCH] register value:";
+        int value;
+        std::cin >> value;
+
+        writeDataToRegister(address, value);
     }
 }
 
@@ -83,6 +93,7 @@ void ModbusClient::writeDataOnSp210(float data)
                 } else {
                     qInfo() << "[ERROR] data is write failed";
                 }
+                reply->deleteLater();
             });
         }
     }
@@ -105,6 +116,28 @@ void ModbusClient::writeDataOnSp10(float data)
                 } else {
                     qInfo() << "[ERROR] data is write failed";
                 }
+                reply->deleteLater();
+            });
+        }
+    }
+}
+
+void ModbusClient::writeDataToRegister(int address, quint16 value)
+{
+    QModbusDataUnit writeUnit(QModbusDataUnit::HoldingRegisters, address, 1);
+    writeUnit.setValue(0, value);
+    if (QModbusReply* reply = _modbusClient->sendWriteRequest(writeUnit, _serverAddress)) {
+        if (!reply->isFinished()) {
+            connect(reply, &QModbusReply::finished, this, [this, reply]() {
+                if (reply->error() == QModbusDevice::NoError) {
+                    qInfo() << "[INFO] data is write successfully";
+                } else {
+                    qCritical()
+                        << "[ERROR] write failed:"
+                        << reply->error()
+                        << reply->errorString();
+                }
+                reply->deleteLater();
             });
         }
     }

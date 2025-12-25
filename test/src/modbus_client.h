@@ -22,6 +22,7 @@ private:
     void startTest();
     void writeDataOnSp210(float data);
     void writeDataOnSp10(float data);
+    void writeDataToRegister(int address, quint16 value);
 
     QModbusClient* _modbusClient;
 

@@ -16,7 +16,7 @@ void TcpSocketClient::onConnected()
     // _socket->write("output on\n");
     // _socket->flush();
 
-    _socket->write("func SIG\n");
+    _socket->write("outp on\n");
     _socket->flush();
 }
 

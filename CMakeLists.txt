@@ -21,6 +21,7 @@ add_executable(device-imitators
     src/devices/trm10_server.h src/devices/trm10_server.cpp
     src/devices/b5_100_server.h src/devices/b5_100_server.cpp
     src/devices/keysight_33510b_server.h src/devices/keysight_33510b_server.cpp
+    src/devices/dsvch_server.h src/devices/dsvch_server.cpp
 )
 target_link_libraries(device-imitators
     Qt${QT_VERSION_MAJOR}::Core

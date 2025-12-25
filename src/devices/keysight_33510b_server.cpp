@@ -132,6 +132,30 @@ void KeySight_33510BServer::parse(QTcpSocket* client, const QString& str)
         qCritical() << "[KeySight 33510B] ERROR set value is not a number";
     }
 
+    // offset ??
+    // error here
+    else if (cmd.startsWith("volt:offs")) {
+        int cmdLength = 9;
+        QString rest = cmd.mid(cmdLength).trimmed();
+
+        if (rest == '?') {
+            qDebug() << "[KeySight 33510B] offset get" << voltageOffset;
+            QByteArray response = QString::number(voltageOffset, 'f', 6).toUtf8();
+            client->write(response);
+            return;
+        }
+
+        bool ok;
+        float val = rest.toFloat(&ok);
+        if (ok) {
+            // add minmax checker!
+            voltageOffset = val;
+            qDebug() << "[KeySight 33510B] offset set to" << val;
+            return;
+        }
+        qCritical() << "[KeySight 33510B] ERROR set value is not a number";
+    }
+
     // amplitude and amplitude fact ??
     else if (cmd.startsWith("volt")) {
         int cmdLength = cmd.startsWith("voltage") ? 7 : 4;
@@ -155,29 +179,6 @@ void KeySight_33510BServer::parse(QTcpSocket* client, const QString& str)
         qCritical() << "[KeySight 33510B] ERROR set value is not a number";
     }
 
-    // offset ??
-    else if (cmd.startsWith("volt:offs")) {
-        int cmdLength = 9;
-        QString rest = cmd.mid(cmdLength).trimmed();
-
-        if (rest == '?') {
-            qDebug() << "[KeySight 33510B] offset get" << voltageOffset;
-            QByteArray response = QString::number(voltageOffset, 'f', 6).toUtf8();
-            client->write(response);
-            return;
-        }
-
-        bool ok;
-        float val = rest.toFloat(&ok);
-        if (ok) {
-            // add minmax checker!
-            voltageOffset = val;
-            qDebug() << "[KeySight 33510B] offset set to" << val;
-            return;
-        }
-        qCritical() << "[KeySight 33510B] ERROR set value is not a number";
-    }
-
     // load ??
     else if (cmd.startsWith("outp:load")) {
         int cmdLength = 9;
@@ -191,11 +192,11 @@ void KeySight_33510BServer::parse(QTcpSocket* client, const QString& str)
         }
 
         bool ok;
-        float val = rest.toFloat(&ok);
+        float val = rest.toInt(&ok);
         if (ok) {
             // add minmax checker!
-            voltageOffset = val;
-            qDebug() << "[KeySight 33510B] offset set to" << val;
+            outputLoad = val;
+            qDebug() << "[KeySight 33510B] load set to" << val;
             return;
         }
         qCritical() << "[KeySight 33510B] ERROR set value is not a number";

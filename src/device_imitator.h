@@ -6,6 +6,7 @@
 #include "devices/trm10_server.h"
 #include "devices/b5_100_server.h"
 #include "devices/keysight_33510b_server.h"
+#include "devices/dsvch_server.h"
 
 #include <QObject>
 
@@ -31,6 +32,8 @@ private:
     B5_100Server _b5_110Server;
 
     KeySight_33510BServer _keysight_33510BServer;
+
+    DSVCHServer _dsvchServer;
 };
 
 #endif // DEVICE_IMITATOR_H

@@ -20,14 +20,14 @@ private:
 
     QTcpServer* _server;
 
-    float frequency = 1;
-    float voltage = 1;
+    float frequency = 0;
+    float voltage = 0;
     float voltageOffset = 0;
     bool output = true;
-    int outputLoad = 50;
+    int outputLoad = 0;
     QString function = "SIN";
-    float funcSquDcyc = 50;
-    float funcRampSymm = 50;
+    float funcSquDcyc = 0;
+    float funcRampSymm = 0;
 };
 
 #endif // KEYSIGHT_33510B_SERVER_H
